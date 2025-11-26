@@ -28,6 +28,26 @@ app.post('/jobs', async (req, res) => {
   }
 });
 
+app.get('/jobs/:id', async (req, res) => {
+  try {
+    const job = await jobQueue.getJob(req.params.id);
+    
+    if (!job) {
+      return res.status(404).json({ error: 'Job não encontrado' });
+    }
+
+    res.json({
+      jobId: job.id,
+      status: await job.getState(),
+      progress: job.progress,
+      data: job.data,
+      result: job.returnvalue
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao buscar job' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`API Gateway rodando na porta ${PORT}`);
 });
