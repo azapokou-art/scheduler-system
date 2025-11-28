@@ -1,6 +1,7 @@
 import express from 'express';
 import { jobQueue } from '../shared/queue';
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -45,6 +46,33 @@ app.get('/jobs/:id', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao buscar job' });
+  }
+});
+
+app.post('/jobs/recurrent', async (req, res) => {
+  try {
+    const job = await jobQueue.add(
+      'recurrent-email',
+      {
+        to: req.body.to,
+        subject: req.body.subject,
+        body: req.body.body
+      },
+      {
+        repeat: {
+          pattern: req.body.cronPattern || '0 * * * *'
+        }
+      }
+    );
+
+    res.json({
+      jobId: job.id,
+      status: 'agendado-recorrente',
+      cronPattern: req.body.cronPattern || '0 * * * *',
+      message: 'Job recorrente criado com sucesso'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar job recorrente' });
   }
 });
 
