@@ -21,7 +21,8 @@
     "bull": "^4.16.5",
     "bullmq": "^5.65.0",
     "express": "^5.1.0",
-    "redis": "^5.10.0"
+    "redis": "^5.10.0",
+    "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.5",

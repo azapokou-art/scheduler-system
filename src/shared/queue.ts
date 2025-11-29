@@ -17,3 +17,14 @@ export const jobQueue = new Queue('emailQueue', {
     }
   }
 });
+
+export const reportQueue = new Queue('reportQueue', {
+  connection,
+  defaultJobOptions: {
+    attempts: 2,
+    backoff: {
+      type: 'fixed',
+      delay: 2000
+    }
+  }
+});

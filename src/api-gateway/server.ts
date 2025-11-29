@@ -1,5 +1,6 @@
 import express from 'express';
 import { jobQueue } from '../shared/queue';
+import { reportQueue } from '../shared/queue';
 
 
 const app = express();
@@ -73,6 +74,25 @@ app.post('/jobs/recurrent', async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: 'Erro ao criar job recorrente' });
+  }
+});
+
+app.post('/jobs/report', async (req, res) => {
+  try {
+    const job = await reportQueue.add('generate-report', {
+      type: req.body.type,
+      dateRange: req.body.dateRange,
+      format: req.body.format
+    });
+
+    res.json({
+      jobId: job.id,
+      status: 'agendado',
+      queue: 'reportQueue',
+      message: 'Job de relatório criado com sucesso'
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Erro ao criar job de relatório' });
   }
 });
 
